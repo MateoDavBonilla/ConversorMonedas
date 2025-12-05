@@ -77,14 +77,6 @@ Copiar código
 
 ---
 
-## ▶️ Ejemplo de Uso
-
-```java
-ExchangeRateApiClient client = new ExchangeRateApiClient();
-ExchangeRateResponse response = client.fetchRates("USD");
-
-double eurRate = response.getConversion_rates().get("EUR");
-System.out.println("1 USD equivale a " + eurRate + " EUR");
 🧑‍💻 Autor
 Proyecto educativo desarrollado por Mateo, con enfoque en buenas prácticas, arquitectura clara y uso de tecnologías modernas de Java.
 
