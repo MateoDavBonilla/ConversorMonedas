@@ -1,16 +1,19 @@
 import com_mateo_conversor.api.ExchangeRateApiClient;
 import com_mateo_conversor.api.dto.ExchangeRateResponse;
+import com_mateo_conversor.service.CurrencyConversionService;
+import com_mateo_conversor.service.CurrencyFilterService;
+import com_mateo_conversor.ui.ConsoleUI;
 
 
 public class Main {
 
     public static void main(String[] args) {
-        ExchangeRateApiClient client = new ExchangeRateApiClient();
-        ExchangeRateResponse response = client.fetchRates("USD");
+        ExchangeRateApiClient apiClient = new ExchangeRateApiClient();
+        CurrencyFilterService filter = new CurrencyFilterService();
+        CurrencyConversionService converter = new CurrencyConversionService(filter);
 
-        System.out.println("Result:" + response.getResult());
-        System.out.println("Base:" + response.getBase_code());
-        System.out.println("Eur rate:" + response.getConversion_rates().get("EUR"));
+        ConsoleUI ui = new ConsoleUI(apiClient, filter, converter);
+        ui.start();
     }
 
 }
