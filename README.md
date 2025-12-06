@@ -1,84 +1,192 @@
-# Conversor de Monedas en Java 💱  
-
-Este proyecto es una aplicación de consola desarrollada en Java cuyo objetivo es realizar conversiones de moneda basadas en tasas de cambio reales obtenidas desde una API externa.  
-Permite consultar tasas de conversión, interpretar la respuesta en formato JSON y procesarla para ofrecer al usuario valores precisos y actualizados.
-
----
-
-## 🚀 Características Principales
-
-- Consumo de la API pública **ExchangeRate-API** para obtener tasas de cambio actualizadas.
-- Uso de `HttpClient` (Java 11+) para realizar solicitudes HTTP.
-- Conversión de respuestas JSON a objetos Java mediante la librería **Gson**.
-- Organización del código utilizando una arquitectura modular con paquetes para:
-  - API (comunicación con el servidor externo)
-  - DTOs (representación de datos)
-  - Lógica de negocio (servicios)
-  - Interfaz de usuario (consola)
-  - Excepciones y modelos
+# 💱 Conversor de Monedas en Java  
+Aplicación de consola construida en Java 17 que permite convertir monedas en tiempo real utilizando la API pública **ExchangeRate API**.  
+Este proyecto combina conceptos esenciales de programación con buenas prácticas de arquitectura, manejo de dependencias, consumo de APIs, deserialización JSON, validaciones de dominio y experiencia de usuario.
 
 ---
 
-## 🔧 Tecnologías Utilizadas
+## 🚀 Características principales
 
-- **Java 17**
-- **HttpClient** para comunicación HTTP
-- **Gson** para procesamiento JSON
-- **IntelliJ IDEA** como entorno de desarrollo
+- ✔ Conversión en tiempo real entre más de **150 monedas**
+- ✔ Base fija en **USD** para optimizar rendimiento y claridad
+- ✔ **Historial de conversiones** manejado en memoria
+- ✔ **Exportación del historial a un archivo** `.txt`
+- ✔ **Soporte para dos idiomas:** Español e Inglés
+- ✔ Visualización de:
+  - ▸ Todas las monedas disponibles desde la API  
+  - ▸ Las monedas más usadas, incluyendo nombre del país  
+- ✔ Validación automática de códigos de moneda
+- ✔ Arquitectura modular siguiendo buenas prácticas (Clean-ish Architecture)
 
 ---
 
-## 📦 Estructura del Proyecto
+## 🧱 Estructura del Proyecto
 
 src/
 └── com_mateo_conversor
 ├── api
-│ ├── ExchangeRateApiClient.java
-│ └── dto
-│ └── ExchangeRateResponse.java
-├── service
-├── ui
+│ ├── dto
+│ │ └── ExchangeRateResponse.java
+│ └── ExchangeRateApiClient.java
+│
 ├── domain
-├── exception
+│ ├── ConversionRecord.java
+│ └── PopularCurrencies.java
+│
+├── service
+│ ├── CurrencyConversionService.java
+│ └── CurrencyFilterService.java
+│
+├── ui
+│ ├── ConsoleUI.java
+│ └── Language.java
+│
 └── Main.java
 
 yaml
 Copiar código
 
-### ¿Qué hace cada módulo?
+---
 
-- **api**  
-  Contiene las clases encargadas de conectarse a la API de tasas de cambio y procesar las respuestas crudas.
+## 🏗 Arquitectura y responsabilidades
 
-- **api/dto**  
-  Objetos que representan la estructura exacta del JSON devuelto por la API.
+### **1. api/**
+Encargado de interactuar con APIs externas y manejar la comunicación HTTP.
 
-- **service**  
-  Lógica para procesar las tasas recibidas y realizar conversiones entre monedas.
+- `ExchangeRateApiClient`  
+  Consume la API **ExchangeRate API** usando `HttpClient` y retorna datos JSON.
 
-- **ui**  
-  Interfaz por consola que guía al usuario durante la conversión.
-
-- **domain**  
-  Modelos internos del sistema (como solicitudes o resultados de conversión).
-
-- **exception**  
-  Excepciones personalizadas para manejo más claro de errores.
+- `ExchangeRateResponse`  
+  DTO para almacenar la respuesta de la API de manera tipada.
 
 ---
 
-## 📡 Funcionamiento General
+### **2. domain/**
+Contiene entidades del dominio de la aplicación.
 
-1. El usuario indica la moneda base y la moneda objetivo.  
-2. La aplicación solicita a ExchangeRate-API las tasas de cambio actualizadas.  
-3. La respuesta JSON se convierte en un objeto Java usando Gson.  
-4. El sistema calcula la conversión basada en la tasa correspondiente.  
-5. Se muestran los resultados de forma clara al usuario.
+- `ConversionRecord`: Representa una conversión realizada por el usuario.  
+- `PopularCurrencies`: Lista predefinida de monedas más usadas con nombre del país.
 
 ---
 
-🧑‍💻 Autor
-Proyecto educativo desarrollado por Mateo, con enfoque en buenas prácticas, arquitectura clara y uso de tecnologías modernas de Java.
+### **3. service/**
+Capa lógica de negocio.
 
-📄 Licencia
-Este proyecto puede ser utilizado con fines educativos o personales.
+- `CurrencyConversionService`:  
+  Contiene la fórmula de conversión usando tasas respecto a USD.
+
+- `CurrencyFilterService`:  
+  Valida si una moneda existe en la respuesta de la API y entrega el listado disponible.
+
+---
+
+### **4. ui/**
+Funcionalidad de interacción con el usuario.
+
+- `ConsoleUI`:  
+  Menú principal, lectura de inputs, visualización de resultados, funciones avanzadas:
+  - selección de idioma  
+  - loop de ejecución  
+  - exportación a archivo  
+  - impresión de historial  
+
+- `Language`:  
+  Enum para manejar ES/EN.
+
+---
+
+## 🖥 Ejemplo de Uso
+
+```text
+===================================
+ Conversor de Monedas - Java
+===================================
+Base currency: USD (fixed)
+
+Elige una opción:
+1. Convertir moneda
+2. Ver monedas disponibles
+3. Ver monedas más usadas
+4. Ver historial
+5. Exportar historial a archivo
+6. Cambiar idioma
+7. Salir
+Conversión:
+
+text
+
+From currency: USD
+To currency: MXN
+Amount: 100
+
+Result: 100 USD = 1820.50 MXN
+Exportación del historial:
+
+text
+
+Historial exportado a: /ConversorMonedas/conversion-history.txt
+📡 API utilizada
+ExchangeRate API (Free Tier)
+https://www.exchangerate-api.com/
+
+La aplicación usa llamadas como:
+
+bash
+
+https://v6.exchangerate-api.com/v6/YOUR_API_KEY/latest/USD
+🧪 Cómo ejecutar el proyecto
+Requisitos
+Java 17+
+
+IntelliJ IDEA (recomendado)
+
+Clonar o descargar este repositorio
+
+Ejecución
+bash
+Copiar código
+javac Main.java
+java Main
+o desde IntelliJ:
+
+Click derecho en Main.java → Run 'Main'
+
+📚 Conceptos aplicados
+Programación modular
+
+Consumo de API REST con HttpClient
+
+Manejo de JSON con Gson
+
+DTOs y separación de capas
+
+Validación de datos
+
+Persistencia simple (exportación a .txt)
+
+Buenas prácticas de arquitectura
+
+Interfaz por consola amigable
+
+Implementación de selección de idiomas (i18n simplificada)
+
+🌟 Mejoras futuras
+Soporte para más idiomas
+
+Exportación del historial en formato CSV o JSON
+
+Integración con una base de datos ligera (SQLite)
+
+Interfaz gráfica con JavaFX o Swing
+
+Tests unitarios con JUnit
+
+Sistema de logs con Log4j o SLF4J
+
+👨‍💻 Autor
+Mateo Bonilla
+Desarrollador Java | UI/UX | Entusiasta de proyectos prácticos
+
+Este proyecto fue construido como parte de un desafío educativo para practicar Java aplicado a APIs reales.
+
+📂 Licencia
+Este proyecto está bajo la licencia MIT. Puedes usarlo y modificarlo libremente.
